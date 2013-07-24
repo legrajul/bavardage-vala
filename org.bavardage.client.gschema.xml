@@ -1,0 +1,34 @@
+<schemalist>
+	<enum id="window-states">
+		<value nick="Normal" value="0" />
+		<value nick="Maximized" value="1" />
+		<value nick="Fullscreen" value="2" />
+	</enum>
+	<schema path="/apps/Bavardage/" id="org.bavardage.client" gettext-domain="bavardage">
+		<key name="window-width" type="i">
+			<default>640</default>
+			<summary>The saved width of the window.</summary>
+			<description>The saved width of the window.</description>
+		</key>
+		<key name="window-height" type="i">
+			<default>480</default>
+			<summary>The saved height of the window.</summary>
+			<description>The saved height of the window.</description>
+		</key>
+		<key name="sidebar-width" type="i">
+			<default>200</default>
+			<summary>The saved width of the sidebar.</summary>
+			<description>The saved width of the sidebar.</description>
+		</key>
+		<key name="window-state" enum="window-states">
+			<default>"Normal"</default>
+			<summary>The saved state of the window.</summary>
+			<description>The saved state of the window.</description>
+		</key>
+		<key name="view-mode" type="i">
+		    <default>0</default>
+		    <summary>The last used view</summary>
+		    <description>The view that was used when Collections was closed for next startup, 0 for liste view, 1 for grid view, 2 for column view</description>
+		</key>
+	</schema>
+</schemalist>
