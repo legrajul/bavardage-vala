@@ -1,12 +1,23 @@
+using Gtk;
 namespace Bavardage.Client {
 
-    public class Client: GLib.Application {
+    public class Client: Gtk.Application {
         private Bavardage.Services.Account current_account;
 
         public Client () {
-            Object(application_id: "bavardage.client", flags: ApplicationFlags.FLAGS_NONE);
+            Object(application_id: "org.bavardage.client", flags: ApplicationFlags.FLAGS_NONE);
             current_account = new Bavardage.Services.Account ("toto", "John Doe", "example@server.net");
         }
+        
+        protected override void activate () {
+            // Create the window of this application and show it
+            Gtk.ApplicationWindow window = new Bavardage.Client.Widgets.MainWindow (this);
+
+            Gtk.Label label = new Gtk.Label ("Wake up Neo...");
+            window.add (label);
+            window.show_all ();
+        }
+        
     }
     
     static void main (string[] args) {
@@ -29,5 +40,8 @@ namespace Bavardage.Client {
         } catch (Error e) {
             stdout.printf (e.message);
         }
+
+        var app = new Bavardage.Client.Client ();
+        app.run (args);
     }
 }

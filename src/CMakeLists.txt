@@ -2,7 +2,7 @@
 
 find_package(Vala REQUIRED)
 include(ValaVersion)
-ensure_vala_version("0.18.0" MINIMUM)
+ensure_vala_version("0.20.0" MINIMUM)
 include(ValaPrecompile)
 
 file(
