@@ -5,6 +5,7 @@ file(
 )
 
 vala_precompile(VALA_C
+    ${config_file}
     ${server_source_files}
     ${services_source_files}
 PACKAGES

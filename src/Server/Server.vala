@@ -2,13 +2,45 @@ using Gee;
 
 namespace Bavardage.Server {
 
-    public class Server: GLib.Object {
+    public class Server: Granite.Application {
+        static construct {
+            DEBUG = true;
+        }
+        construct {
+			program_name = "Bavardage";
+			exec_name = "bavardage-server";
+			
+			build_data_dir = Constants.DATADIR;
+			build_pkg_data_dir = Constants.PKGDATADIR;
+			build_release_name = Constants.RELEASE_NAME;
+			build_version = Constants.VERSION;
+			build_version_info = Constants.VERSION_INFO;
+			
+			app_years = "2013";
+			app_icon = exec_name;
+			app_launcher = exec_name+".desktop";
+			application_id = "net.launchpad."+exec_name;
+			
+			main_url = "https://github.com/legrajul/bavardage-vala";
+			bug_url = "https://github.com/legrajul/bavardage-vala/issues";
+			help_url = "https://github.com/legrajul/bavardage-vala/wiki";
+			
+			about_authors = {"Julien Legras <julomino@gmail.com>"};
+			about_documenters = {"Julien Legras"};
+			about_artists = {"Julien Legras"};
+			about_comments = "Discuss, share in a soon-to-be secure way";
+			about_translators = "";
+			about_license_type = Gtk.License.GPL_3_0;
+		}
+        
         private Socket listening_socket;
 
         private Gee.MultiMap<string, string> rooms;
         private Gee.Map<string, string> admins;
         
         public Server (string address, uint16 port) {
+            Granite.Services.Logger.initialize ("bavardate-server");
+            Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
             try {
                 // Setting up the listening socket
                 this.listening_socket = new Socket (SocketFamily.IPV4, SocketType.STREAM, SocketProtocol.TCP);
@@ -37,7 +69,7 @@ namespace Bavardage.Server {
         }
 
         private bool on_incoming_connection (Socket client) {
-            stdout.printf ("Got incoming connection\n");
+            message ("Got incoming connection");
             // Process the request asynchronously
             process_request.begin (client);
             return true;
@@ -53,9 +85,8 @@ namespace Bavardage.Server {
                     for (int i = 0; i <= l; i++) {
                         s.append_c ((char) buffer[i]);
                     }
-                    stdout.printf ("Message received: %s\n", (string) buffer);
-                    Bavardage.Services.Message m = Bavardage.Services.string_to_message (buffer);
-                    stdout.printf ("m.code = %d, m.sender = %s, m.receiver = %s, m.content = %s\n", m.code, (string) m.sender, (string) m.receiver, (string) m.content);
+                    Bavardage.Services.Message m = new Bavardage.Services.Message.from_string (buffer);
+                    message ("m.code = %d, m.sender = %s, m.receiver = %s, m.content = %s\n", m.code, (string) m.sender, (string) m.receiver, (string) m.content);
                     switch (m.code) {
                         case Bavardage.Services.MessageCode.CONNECT:
                             break;

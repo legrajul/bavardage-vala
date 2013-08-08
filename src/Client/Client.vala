@@ -2,7 +2,9 @@ using Gtk;
 namespace Bavardage.Client {
 
     public class Client: Granite.Application {
-        
+        static construct {
+            DEBUG = true;
+        }
         construct {
 			program_name = "Bavardage";
 			exec_name = "bavardage-client";
@@ -46,22 +48,14 @@ namespace Bavardage.Client {
     }
     
     static void main (string[] args) {
-        stdout.printf ("Message creation\n");
-        Bavardage.Services.Message m = {-1, "".data, "".data, "".data };
-        m.code = Bavardage.Services.MessageCode.JOIN_ROOM;
-        m.sender = "toto".data;
-        m.receiver = "".data;
-        m.content = "salon1".data;
+        Bavardage.Services.Message m = new Bavardage.Services.Message ( Bavardage.Services.MessageCode.JOIN_ROOM, "toto".data, "".data, "salon1".data);
 
         // Connect
-        stdout.printf ("Connection\n");
         try {
             var client = new SocketClient ();
             var conn = client.connect (new InetSocketAddress (new InetAddress.from_string ("127.0.0.1"), 10000));
 
-            // Send HTTP GET request;
-            stdout.printf ("Sending message\n");  
-            conn.output_stream.write (Bavardage.Services.message_to_string (m));
+            conn.output_stream.write (m.to_string ());
         } catch (Error e) {
             stdout.printf (e.message);
         }
