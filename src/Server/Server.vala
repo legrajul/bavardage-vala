@@ -28,6 +28,7 @@ namespace Bavardage.Server {
                         on_incoming_connection (client);
                     } catch (Error e) {
                         stderr.printf (e.message);
+                        break;
                     }
                 }
             } catch (GLib.Error e) {
@@ -43,9 +44,9 @@ namespace Bavardage.Server {
         }
 
         private async void process_request (Socket client) {
-            try {
-                uint8 buffer[1024];
-                while (true) {
+            uint8 buffer[1024];
+            while (true) {
+                try {
                     ssize_t l = client.receive (buffer);
                     buffer[l] = '\0';
                     StringBuilder s = new StringBuilder ();
@@ -54,14 +55,42 @@ namespace Bavardage.Server {
                     }
                     stdout.printf ("Message received: %s\n", (string) buffer);
                     Bavardage.Services.Message m = Bavardage.Services.string_to_message (buffer);
-                    stdout.printf ("m.sender = %s, m.receiver = %s, m.content = %s\n", (string) m.sender, (string) m.receiver, (string) m.content);
+                    stdout.printf ("m.code = %d, m.sender = %s, m.receiver = %s, m.content = %s\n", m.code, (string) m.sender, (string) m.receiver, (string) m.content);
+                    switch (m.code) {
+                        case Bavardage.Services.MessageCode.CONNECT:
+                            break;
+
+                        case Bavardage.Services.MessageCode.DISCONNECT:
+                            break;
+
+                        case Bavardage.Services.MessageCode.JOIN_ROOM:
+                            join_room ((string) m.content, (string) m.sender);
+                            break;
+
+                        case Bavardage.Services.MessageCode.QUIT_ROOM:
+                            break;
+
+                        case Bavardage.Services.MessageCode.PM:
+                            break;
+
+                        default:
+                            break;
+                    }
+                    break;
+                } catch (Error e) {
+                    stdout.printf (e.message);
+                    break;
                 }
-            } catch (Error e) {
-              
             }
         }
         
-        public void create_room (string room_name, string admin_name) {
+        public void join_room (string room_name, string user_name) {
+            message ("BEGIN join_room, room_name: %s, user_name: %s", room_name, user_name);
+
+            message ("END join_room");
+        }
+
+        public void quit_room (string room_name, string user_name) {
 
         }
         
