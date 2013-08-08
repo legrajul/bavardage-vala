@@ -1,12 +1,39 @@
 using Gtk;
 namespace Bavardage.Client {
 
-    public class Client: Gtk.Application {
+    public class Client: Granite.Application {
+        
+        construct {
+			program_name = "Bavardage";
+			exec_name = "bavardage-client";
+			
+			build_data_dir = Constants.DATADIR;
+			build_pkg_data_dir = Constants.PKGDATADIR;
+			build_release_name = Constants.RELEASE_NAME;
+			build_version = Constants.VERSION;
+			build_version_info = Constants.VERSION_INFO;
+			
+			app_years = "2013";
+			app_icon = exec_name;
+			app_launcher = exec_name+".desktop";
+			application_id = "net.launchpad."+exec_name;
+			
+			main_url = "https://github.com/legrajul/bavardage-vala";
+			bug_url = "https://github.com/legrajul/bavardage-vala/issues";
+			help_url = "https://github.com/legrajul/bavardage-vala/wiki";
+			
+			about_authors = {"Julien Legras <julomino@gmail.com>"};
+			about_documenters = {"Julien Legras"};
+			about_artists = {"Julien Legras"};
+			about_comments = "Discuss, share in a soon-to-be secure way";
+			about_translators = "";
+			about_license_type = Gtk.License.GPL_3_0;
+		}
+        
         private Bavardage.Services.Account current_account;
 
         public Client () {
-            Object(application_id: "org.bavardage.client", flags: ApplicationFlags.FLAGS_NONE);
-            current_account = new Bavardage.Services.Account ("toto", "John Doe", "example@server.net");
+            //TODO: init the client state
         }
         
         protected override void activate () {
