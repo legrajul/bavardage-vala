@@ -13,8 +13,6 @@ namespace Bavardage.Client {
             // Create the window of this application and show it
             Gtk.ApplicationWindow window = new Bavardage.Client.Widgets.MainWindow (this);
 
-            Gtk.Label label = new Gtk.Label ("Wake up Neo...");
-            window.add (label);
             window.show_all ();
         }
         
