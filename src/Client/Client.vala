@@ -16,7 +16,7 @@ namespace Bavardage.Client {
 			build_version_info = Constants.VERSION_INFO;
 			
 			app_years = "2013";
-			app_icon = exec_name;
+			app_icon = "mail-message-new";
 			app_launcher = exec_name+".desktop";
 			application_id = "net.launchpad."+exec_name;
 			
@@ -32,17 +32,43 @@ namespace Bavardage.Client {
 			about_license_type = Gtk.License.GPL_3_0;
 		}
         
-        private Bavardage.Services.Account current_account;
+        private Gee.Map<string, Bavardage.Services.Account> accounts;
 
         public Client () {
             //TODO: init the client state
+            accounts = new Gee.HashMap<string, Bavardage.Services.Account> ();
         }
         
         protected override void activate () {
             // Create the window of this application and show it
             Gtk.ApplicationWindow window = new Bavardage.Client.Widgets.MainWindow (this);
-
+            window.destroy.connect ( () => {
+                foreach (Bavardage.Services.Account acc in accounts.values) {
+                    acc.connection.close ();
+                }
+                Gtk.main_quit ();
+            });
             window.show_all ();
+        }
+        
+        
+        protected async void process_receiving (SocketConnection conn) {
+            while (true) {
+                
+            }
+        }
+        
+        public bool add_account (string account_name, string server_address, int server_port, string login, string email) {
+            try {
+                var account = new Bavardage.Services.Account (login, login, email, server_address, server_port);
+                accounts.set (account_name, account); 
+                return true;
+            } catch (Bavardage.Services.ErrorTypeAccount eta) {
+                debug ("%s", eta.message);
+                return false;
+            } catch (GLib.Error e) {
+                return false;
+            }
         }
         
     }
@@ -59,7 +85,7 @@ namespace Bavardage.Client {
         } catch (Error e) {
             stdout.printf (e.message);
         }
-
+        Gtk.init (ref args);
         var app = new Bavardage.Client.Client ();
         app.run (args);
     }

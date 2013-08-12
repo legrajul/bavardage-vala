@@ -7,6 +7,8 @@ namespace Bavardage.Client.Widgets {
         private Gtk.ToolButton create_room_button;
         public Granite.Widgets.SearchBar search_bar { get; private set; }
         public Granite.Widgets.AppMenu app_menu { get; private set; }
+        public Bavardage.Client.Widgets.Chat chat_view { get; private set; }
+        public Gtk.Entry message_entry { get; private set; }
         
         public MainWindow (Granite.Application app) {
             this.set_application (app);
@@ -47,9 +49,38 @@ namespace Bavardage.Client.Widgets {
             mainbox.pack_start (toolbar, false);
             
             welcome = new Granite.Widgets.Welcome ("Bavardage", _("Your secure chat"));
-			welcome.append ("add", _("Create Account"), _("Create a new account"));
+			welcome.append ("contact-new", _("New account"), _("Create a new account"));
+            
+            welcome.activated.connect ( (idx) => {
+                switch (idx) {
+                    case 0:
+                        var w = new Bavardage.Client.Widgets.NewAccount (this, application);
+                        w.connect_regular.connect ( (an, sa, sp, login, email) => {
+                                if (((Bavardage.Client.Client) application).add_account (an, sa, sp, login, email)) {
+                                    mainbox.remove (welcome);
                 
+                                    chat_view = new Bavardage.Client.Widgets.Chat ();
+                                    mainbox.pack_start (chat_view);
+                                    
+                                    message_entry = new Gtk.Entry ();
+                                    message_entry.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "ok");
+                                    mainbox.pack_start (message_entry, false, true);
+                                    
+                                    this.show_all ();
+                                    
+                                    chat_view.insert_message ("Trinity", "Wake up Neo...", new DateTime.now_local ());
+                                }
+                            });
+                        w.run ();
+                        
+                        break;
+                    default:
+                        break;
+                }                
+            });
+            
             mainbox.pack_start (welcome);
+            
         }
     }
 }
